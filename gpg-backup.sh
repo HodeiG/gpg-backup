@@ -85,6 +85,8 @@ function decrypt() {
 #################
 # VALIDATE DATA
 #################
+set -x
+set -v
 ACTION=$1
 SRC_DIR=$(readlink -f $2)
 DST_DIR=$(readlink -f $3)
@@ -93,8 +95,9 @@ GPG_KEY=$4
 test -n "$ACTION" && [ "$ACTION" == "backup" -o "$ACTION" == "restore" ] || error 1
 [ -d "$SRC_DIR" ] || error 2
 [ ! -d "$DST_DIR" ] || error 3
-[ "$ACTION" == "backup" -a -n "$GPG_KEY" ] && gpg --list-keys |\
-    grep -q -w $GPG_KEY 2> /dev/null || error 4
+if [ "$ACTION" == "backup" -a -n "$GPG_KEY" ] ; then
+    gpg --list-keys | grep -q -w $GPG_KEY 2> /dev/null || error 4
+fi
 #################
 # MAIN
 #################
